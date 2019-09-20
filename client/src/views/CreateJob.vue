@@ -1,41 +1,31 @@
 <template>
-  <div>
-    <v-flex xs6>
-      <div>
-        <v-text-field
+  <v-form ref="form" v-model="valid">
+    <v-row align="center" justify="center">
+      <v-col cols="12" sm="4">
+        <v-select
           label="Category"
           required
           :rules="[required]"
           v-model="job.category"
-        ></v-text-field>
+          :items="categories"
+        ></v-select>
 
-        <v-text-field
+        <v-select
           label="Subcategory"
           required
           :rules="[required]"
           v-model="job.subcategory"
-        ></v-text-field>
+          :items="subcategories"
+        ></v-select>
+      </v-col>
 
-        <v-text-field
-          label="Summary"
-          required
-          :rules="[required]"
-          v-model="job.summary"
-        ></v-text-field>
-
-        <v-text-field
-          label="Description"
-          required
-          multi-line
-          :rules="[required]"
-          v-model="job.description"
-        ></v-text-field>
-
+      <v-col cols="12" sm="4">
         <v-text-field
           label="Deadline"
           required
           :rules="[required]"
           v-model="job.deadline"
+          type="date"
         ></v-text-field>
 
         <v-text-field
@@ -44,42 +34,90 @@
           :rules="[required]"
           v-model="job.city"
         ></v-text-field>
-      </div>
+      </v-col>
+    </v-row>
 
-      <div class="danger-alert" v-if="error">
-        {{error}}
-      </div>
+    <v-row align="center" justify="center">
+      <v-col cols="12" sm="8">
+        <v-text-field
+          label="Summary"
+          required
+          :rules="[required]"
+          v-model="job.summary"
+        ></v-text-field>
 
-      <v-btn
-        @click="save">
-        Save
-      </v-btn>
-      <v-btn
-        :to="{
-          name: 'home'
-        }">
-        Return
-      </v-btn>
-    </v-flex>
-  </div>
+        <v-textarea
+          label="Description"
+          required
+          auto-grow
+          :rules="[required]"
+          v-model="job.description"
+          rows="1"
+        ></v-textarea>
+
+        <div class="danger-alert" v-if="error">
+          {{error}}
+        </div>
+
+        <v-btn
+          :disabled="!valid"
+          class="mr-4"
+          @click="save">
+          Save
+        </v-btn>
+        <v-btn
+          class="mr-4"
+          :to="{
+            name: 'jobs'
+          }">
+          Return
+        </v-btn>
+      </v-col>
+    </v-row>
+  </v-form>
 </template>
 
 <script>
+import moment from 'moment'
 import JobsService from '@/services/JobsService'
 
 export default {
   name: 'createJob',
   data () {
     return {
-      job: Object,
+      valid: true,
+      job: {
+        _id: null,
+        category: null,
+        subcategory: null,
+        summary: null,
+        description: null,
+        deadline: null,
+        city: null
+      },
       error: null,
+      categories: [
+        'Category 1',
+        'Category 2',
+        'Category 3',
+        'Category 4'
+      ],
+      subcategories: [
+        'SubCategory 1',
+        'SubCategory 2',
+        'SubCategory 3',
+        'SubCategory 4'
+      ],
       required: (value) => !!value || 'Required.'
     }
   },
   async mounted () {
     try {
-      const jobId = this.$route.params.jobId
-      this.job = (await JobsService.get(jobId)).data
+      this.job._id = this.$route.params.jobId
+      if (this.job._id !== undefined) {
+        this.job = (await JobsService.get(this.job._id)).data
+        this.job.deadline = moment(this.job.deadline).format('YYYY-MM-DD')
+      }
     } catch (err) {
       console.log(err)
     }
@@ -87,25 +125,24 @@ export default {
   methods: {
     async save () {
       this.error = null
-      const areAllFieldsFilledIn = Object
-        .keys(this.job)
-        .every(key => !!this.job[key])
-      if (!areAllFieldsFilledIn) {
+      if (this.$refs.form.validate()) {
+        try {
+          if (this.job._id !== undefined) {
+            await JobsService.put(this.job)
+          } else {
+            await JobsService.post(this.job)
+          }
+          this.$refs.form.reset()
+          this.$router.push({
+            name: 'jobs'
+          })
+        } catch (err) {
+          console.log(err)
+        }
+      } else {
         this.error = 'Please fill in all the required fields.'
-        return
-      }
-      try {
-        await JobsService.post(this.job)
-        this.$router.push({
-          name: 'home'
-        })
-      } catch (err) {
-        console.log(err)
       }
     }
   }
 }
 </script>
-
-<style scoped>
-</style>

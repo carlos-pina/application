@@ -4,4 +4,6 @@ module.exports = (app) => {
   app.get('/jobs', JobController.getJobs)
   app.get('/jobs/:jobId', JobController.getJob)
   app.post('/jobs', JobController.setJob)
+  app.put('/jobs', JobController.putJob)
+  app.delete('/jobs/:jobId', JobController.deleteJob)
 }

@@ -29,8 +29,34 @@ module.exports = {
       city: req.body.city
     })
 
-    job.save().then(data => {
-      res.send(data)
+    job.save().then(job => {
+      res.send(job)
+    }).catch(err => {
+      res.status(500).send({
+        message: err.message
+      })
+    })
+  },
+  putJob (req, res) {
+    Job.findById(req.body._id).then(job => {
+      job.category = req.body.category
+      job.subcategory = req.body.subcategory
+      job.summary = req.body.summary
+      job.description = req.body.description
+      job.deadline = req.body.deadline
+      job.city = req.body.city
+      job.save().then(() => {
+        res.send(job)
+      })
+    }).catch(err => {
+      res.status(500).send({
+        message: err.message
+      })
+    })
+  },
+  deleteJob (req, res) {
+    Job.findByIdAndDelete(req.params.jobId).then(() => {
+      res.send()
     }).catch(err => {
       res.status(500).send({
         message: err.message

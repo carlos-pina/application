@@ -9,5 +9,11 @@ export default {
   },
   post (job) {
     return Api().post('jobs', job)
+  },
+  put (job) {
+    return Api().put('jobs', job)
+  },
+  delete (jobId) {
+    return Api().delete(`jobs/${jobId}`)
   }
 }

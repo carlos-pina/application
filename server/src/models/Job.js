@@ -5,7 +5,7 @@ const jobSchema = new mongoose.Schema({
   subcategory: { type: String },
   summary: { type: String },
   description: { type: String },
-  deadline: { type: String },
+  deadline: { type: Date },
   city: { type: String },
   updated: { type: Date, default: Date.now }
 })
