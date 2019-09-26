@@ -11,9 +11,10 @@ app.use(cors())
 require('./routes')(app)
 
 mongoose.Promise = global.Promise
-mongoose.connect(`${config.db.url}`, {
+mongoose.connect(config.db.url, {
   useNewUrlParser: true,
-  useCreateIndex: true
+  useCreateIndex: true,
+  useUnifiedTopology: true
 }).then(async () => {
   app.listen(config.port, () =>
     console.log(`Server started on port ${config.port}`)
