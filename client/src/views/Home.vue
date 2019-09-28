@@ -14,23 +14,25 @@
       <v-col cols="12" sm="8" md="8">
         <v-expansion-panels accordion>
           <v-expansion-panel
-            v-for="(cat,i) in 4"
-            :key="i"
+            v-for="category in categories"
+            :category="category"
+            :key="category.id"
           >
-            <v-expansion-panel-header>Category {{i + 1}}</v-expansion-panel-header>
+            <v-expansion-panel-header>{{category.name}}</v-expansion-panel-header>
             <v-expansion-panel-content>
               <span
-                v-for="(sub,j) in 4"
-                :key="j"
+                v-for="subcategory in category.subcategories"
+                :subcategory="subcategory"
+                :key="subcategory.id"
               >
                 <v-chip
                   class="ma-2"
                   color="primary"
                   outlined
                   pill
-                  @click="showMessage"
+                  @click="search (subcategory.name)"
                 >
-                  SubCategory {{j + 1}}
+                  {{subcategory.name}}
                 </v-chip>
               </span>
             </v-expansion-panel-content>
@@ -43,6 +45,7 @@
 </template>
 
 <script>
+import CategoriesService from '@/services/CategoriesService'
 import PageFooter from '@/components/AppFooter.vue'
 
 export default {
@@ -50,9 +53,17 @@ export default {
   components: {
     PageFooter
   },
+  data () {
+    return {
+      categories: null
+    }
+  },
+  async mounted () {
+    this.categories = (await CategoriesService.gets()).data
+  },
   methods: {
-    showMessage () {
-      alert('Subcategory...')
+    search (name) {
+      alert(`Searching for ${name}`)
     }
   }
 }

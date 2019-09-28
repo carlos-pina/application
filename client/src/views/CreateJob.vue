@@ -8,6 +8,7 @@
           :rules="[required]"
           v-model="job.category"
           :items="categories"
+          @change="loadSubcategories"
         ></v-select>
 
         <v-select
@@ -80,6 +81,7 @@
 <script>
 import moment from 'moment'
 import JobsService from '@/services/JobsService'
+import CategoriesService from '@/services/CategoriesService'
 
 export default {
   name: 'createJob',
@@ -96,23 +98,17 @@ export default {
         city: null
       },
       error: null,
-      categories: [
-        'Category 1',
-        'Category 2',
-        'Category 3',
-        'Category 4'
-      ],
-      subcategories: [
-        'SubCategory 1',
-        'SubCategory 2',
-        'SubCategory 3',
-        'SubCategory 4'
-      ],
+      dataCategories: null,
+      categories: [],
+      subcategories: [],
       required: (value) => !!value || 'Required.'
     }
   },
   async mounted () {
     try {
+      this.dataCategories = (await CategoriesService.gets()).data
+      this.categories = this.dataCategories.map(d => { return { 'value': d._id, 'text': d.name } })
+
       this.job._id = this.$route.params.jobId
       if (this.job._id !== undefined) {
         this.job = (await JobsService.get(this.job._id)).data
@@ -123,6 +119,10 @@ export default {
     }
   },
   methods: {
+    loadSubcategories () {
+      const sub = this.dataCategories.find(d => { return d._id === this.job.category })
+      this.subcategories = sub.subcategories.map(s => { return { 'value': s._id, 'text': s.name } })
+    },
     async save () {
       this.error = null
       if (this.$refs.form.validate()) {
