@@ -18,18 +18,16 @@ module.exports = {
       const { email, password } = req.body
       const { error, user } = await User.findByCredentials(email, password)
       if (error) {
-        return res.status(401).send({
-          error
-        })
+        return res.status(401).send(error)
       }
       const token = await user.generateAuthToken()
-      res.send({ user, token })
+      res.status(200).send({ user, token })
     } catch (error) {
       res.status(400).send(error)
     }
   },
   profileUser (req, res) {
-    res.send(req.user)
+    res.status(200).send(req.user)
   },
   async logoutUser (req, res) {
     try {
@@ -37,18 +35,18 @@ module.exports = {
         return token.token !== req.token
       })
       await req.user.save()
-      res.send()
+      res.status(204).send()
     } catch (error) {
-      res.status(500).send(error)
+      res.status(400).send(error)
     }
   },
   async logoutallUser (req, res) {
     try {
       req.user.tokens.splice(0, req.user.tokens.length)
       await req.user.save()
-      res.send()
+      res.status(204).send()
     } catch (error) {
-      res.status(500).send(error)
+      res.status(400).send(error)
     }
   }
 }
