@@ -23,7 +23,9 @@
         @click="deleteJob">
         Delete
       </v-btn>
-      <v-btn class="mr-4">
+      <v-btn 
+        class="mr-4"
+        @click="applyJob">
         Apply
       </v-btn>
     </v-card-actions>
@@ -48,6 +50,9 @@ export default {
       } catch (err) {
         console.log(err)
       }
+    },
+    async applyJob () {
+      alert('Do you really apply to this job?')
     }
   }
 }

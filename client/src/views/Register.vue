@@ -3,10 +3,18 @@
     <v-col cols="12" sm="8" md="4">
       <v-card>
         <v-toolbar flat>
-          <v-toolbar-title>Login</v-toolbar-title>
+          <v-toolbar-title>Register</v-toolbar-title>
         </v-toolbar>
         <v-card-text>
           <v-form ref="form" v-model="valid">
+            <v-text-field
+              label="Name"
+              required
+              :rules="[required]"
+              prepend-icon="mdi-account"
+              v-model="credentials.name"
+              type="text"
+            ></v-text-field>
             <v-text-field
               label="Email"
               required
@@ -29,8 +37,8 @@
           <div class="flex-grow-1"></div>
           <v-btn
             :disabled="!valid"
-            @click="login">
-            Login
+            @click="register">
+            Register
           </v-btn>
         </v-card-actions>
       </v-card>
@@ -51,13 +59,14 @@
 import UsersService from '@/services/UsersService'
 
 export default {
-  name: 'login',
+  name: 'register',
   data () {
     return {
       error: null,
       snackbar: false,
       valid: true,
       credentials: {
+        name: null,
         email: null,
         password: null
       },
@@ -65,9 +74,9 @@ export default {
     }
   },
   methods: {
-    async login () {
+    async register () {
       try {
-        const data = (await UsersService.login(this.credentials)).data
+        const data = (await UsersService.register(this.credentials)).data
         this.$store.dispatch('setToken', data.token)
         this.$store.dispatch('setUser', data.user)
         this.$refs.form.reset()

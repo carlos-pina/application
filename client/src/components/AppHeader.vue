@@ -10,12 +10,28 @@
             <v-list-item-title>Home</v-list-item-title>
           </v-list-item-content>
         </v-list-item>
-        <v-list-item @click="goLogin">
+        <v-list-item v-if="!$store.state.isUserLoggedIn" @click="goLogin">
           <v-list-item-action>
             <v-icon>mdi-login</v-icon>
           </v-list-item-action>
           <v-list-item-content>
             <v-list-item-title>Login</v-list-item-title>
+          </v-list-item-content>
+        </v-list-item>
+        <v-list-item v-if="!$store.state.isUserLoggedIn" @click="goRegister">
+          <v-list-item-action>
+            <v-icon>mdi-login</v-icon>
+          </v-list-item-action>
+          <v-list-item-content>
+            <v-list-item-title>Register</v-list-item-title>
+          </v-list-item-content>
+        </v-list-item>
+        <v-list-item v-if="$store.state.isUserLoggedIn" @click="goLogout">
+          <v-list-item-action>
+            <v-icon>mdi-login</v-icon>
+          </v-list-item-action>
+          <v-list-item-content>
+            <v-list-item-title>Logout</v-list-item-title>
           </v-list-item-content>
         </v-list-item>
         <v-list-item @click="goJobs">
@@ -60,6 +76,18 @@ export default {
     goLogin () {
       this.$router.push({
         name: 'login'
+      })
+    },
+    goRegister () {
+      this.$router.push({
+        name: 'register'
+      })
+    },
+    goLogout () {
+      this.$store.dispatch('setToken', null)
+      this.$store.dispatch('setUser', null)
+      this.$router.push({
+        name: 'home'
       })
     },
     goJobs () {
