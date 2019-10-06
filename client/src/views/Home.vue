@@ -6,6 +6,9 @@
           label="Jobs"
           placeholder="Start typing to Search"
           prepend-icon="mdi-magnify"
+          :items="subcategories"
+          v-model="selection"
+          @change="searchBySelect"
           >
         </v-autocomplete>
       </v-col>
@@ -30,7 +33,7 @@
                   color="primary"
                   outlined
                   pill
-                  @click="search (subcategory.name)"
+                  @click="searchByClick (subcategory._id)"
                 >
                   {{subcategory.name}}
                 </v-chip>
@@ -55,15 +58,37 @@ export default {
   },
   data () {
     return {
-      categories: null
+      selection: null,
+      categories: null,
+      subcategories: []
     }
   },
   async mounted () {
     this.categories = (await CategoriesService.gets()).data
+    this.categories.forEach(category => {
+      category.subcategories.forEach(subcategory => {
+        this.subcategories.push({
+          'value': subcategory._id, 'text': subcategory.name
+        })
+      })
+    })
   },
   methods: {
-    search (name) {
-      alert(`Searching for ${name}`)
+    searchBySelect () {
+      this.$router.push({
+        name: 'jobs',
+        params: {
+          subcategoryId: this.selection
+        }
+      })
+    },
+    searchByClick (subcategoryId) {
+      this.$router.push({
+        name: 'jobs',
+        params: {
+          subcategoryId: subcategoryId
+        }
+      })
     }
   }
 }

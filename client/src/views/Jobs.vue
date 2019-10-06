@@ -21,7 +21,12 @@ export default {
     }
   },
   async mounted () {
-    this.jobs = (await JobsService.gets()).data
+    const subcategoryId = this.$route.params.subcategoryId
+    if (subcategoryId !== undefined) {
+      this.jobs = (await JobsService.getSub(subcategoryId)).data
+    } else {
+      this.jobs = (await JobsService.gets()).data
+    }
   }
 }
 </script>

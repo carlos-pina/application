@@ -10,12 +10,7 @@
     <v-card-actions>
       <v-btn
         class="mr-4"
-        :to="{
-          name: 'editJob',
-          params: {
-            jobId: job._id
-          }
-        }">
+        @click="editJob (job._id)">
         Edit
       </v-btn>
       <v-btn
@@ -23,7 +18,7 @@
         @click="deleteJob">
         Delete
       </v-btn>
-      <v-btn 
+      <v-btn
         class="mr-4"
         @click="applyJob">
         Apply
@@ -41,6 +36,14 @@ export default {
     job: Object
   },
   methods: {
+    editJob (idJob) {
+      this.$router.push({
+        name: 'editJob',
+        params: {
+          jobId: idJob
+        }
+      })
+    },
     async deleteJob () {
       try {
         await JobsService.delete(this.job._id)

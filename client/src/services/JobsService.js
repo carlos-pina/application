@@ -7,6 +7,9 @@ export default {
   get (jobId) {
     return Api().get(`jobs/${jobId}`)
   },
+  getSub (subcategoryId) {
+    return Api().get(`jobs/s/${subcategoryId}`)
+  },
   post (job) {
     return Api().post('jobs', job)
   },

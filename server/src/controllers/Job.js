@@ -10,8 +10,19 @@ module.exports = {
       })
     })
   },
-  getJob (req, res) {
+  getJobById (req, res) {
     Job.findById(req.params.jobId).then(job => {
+      res.send(job)
+    }).catch(err => {
+      res.status(500).send({
+        message: err.message
+      })
+    })
+  },
+  getJobBySubCategory (req, res) {
+    Job.find({
+      subcategory: req.params.subcategoryId
+    }).then(job => {
       res.send(job)
     }).catch(err => {
       res.status(500).send({
